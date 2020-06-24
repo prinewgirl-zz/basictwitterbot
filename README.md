@@ -15,8 +15,11 @@ Esse programa tem as seguintes funções:
 Para instalar faça em um ambiente Linux faça:
 
 virtualenv venvtest -ppython3
+
 . venvtest/bin/activate
+
 pip install -r requirements.txt
+
 $ python twitterapp.py <opções>
 
 Para ajuda, digite:
