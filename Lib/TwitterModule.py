@@ -18,15 +18,11 @@ class ManageTwitter:
         self.api.update_status(message)
     def erase(self, tweet_id):
         self.api.destroy_status(tweet_id)
-    def search(self, text = None, language = 'None'):
-        if language == None:
-            result = tweepy.Cursor(self.api.search, q = text).items()
-        else:
-            result = tweepy.Cursor(self.api.search, q = text, 
-                               lang = language).items()
-        return result
+    def search(self,texto, items = 10):
+            result = tweepy.Cursor(self.api.search, q = texto).items(items)
+            return result
     def reply(self, message, tweetid):
         self.api.update_status(message, in_reply_to_status_id = tweetid)
     def retweet(self, tweetid):
         self.api.retweet(tweetid)
-    
+

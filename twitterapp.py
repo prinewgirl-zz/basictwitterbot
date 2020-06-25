@@ -59,20 +59,17 @@ def cria_hashtag(texto):
 def rm_hashtag(hashtag):
     '''essa função recebe uma hashtag e deleta todos os tweets feitos
     pelo usuário a usando'''
-    tweets = twitter.search(text='#hashtag')
-    for tweet in tweets:
-        print(tweet)
-    print(tweets)
+    tweets = twitter.search(hashtag, items=100)
+    while(len(tweets) != 0):
+        for tweet in tweets:
+            print(tweet.text)
 try:
-    print(consumer_key)
-    print(consumer_secret)
-    print(acess_token)
-    print(acess_token_secret)
+
     twitter = TwitterModule.ManageTwitter(consumer_key,consumer_secret,\
                                         acess_token, acess_token_secret)
     if args.addhashtag is not None:
         cria_hashtag(args.addhashtag)
-    rm_hashtag("texto")
+    rm_hashtag('x86girl')
 except ManipulaExcecoes.LengthError as tamexce:
     print(tamexce)
     sys.exit()
