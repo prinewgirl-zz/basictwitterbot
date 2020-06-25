@@ -12,7 +12,7 @@ Esse programa tem as seguintes funções:
     Os parâmetros de input e output são listados executando-se
     $ python3 twitterapp.py -h
 
-Para instalar faça em um ambiente Linux faça:
+Para instalar em um ambiente Linux, faça:
 
 virtualenv venvtest -ppython3
 
