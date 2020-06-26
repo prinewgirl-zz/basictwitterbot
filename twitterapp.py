@@ -34,6 +34,7 @@ consumer_key = config.get("Geral","CONSUMER_KEY")
 consumer_secret = config.get("Geral","CONSUMER_SECRET")
 acess_token = config.get("Geral","ACESS_TOKEN")
 acess_token_secret = config.get("Geral","ACESS_TOKEN_SECRET")
+user = config.get("Geral","USERNAME")
 
 ###############################################################################
 ## Configura os argumentos passados para a linha de comando
@@ -42,6 +43,10 @@ acess_token_secret = config.get("Geral","ACESS_TOKEN_SECRET")
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--addhashtag', help='Adiciona uma hashtag', 
+                    metavar='HASHTAG',default=None)
+parser.add_argument('--rmhashtag', help='Remove uma hashtag', 
+                    metavar='HASHTAG',default=None)
+parser.add_argument('--filtrahashtag', help='Filtra uma hashtag', 
                     metavar='HASHTAG',default=None)
 args = parser.parse_args()
 
@@ -59,17 +64,26 @@ def cria_hashtag(texto):
 def rm_hashtag(hashtag):
     '''essa função recebe uma hashtag e deleta todos os tweets feitos
     pelo usuário a usando'''
-    tweets = twitter.search(hashtag, items=100)
-    while(len(tweets) != 0):
-        for tweet in tweets:
-            print(tweet.text)
-try:
+    if '#' in hashtag:
+        twitter.erase_all(hashtag)
+    else:
+        raise ManipulaExcecoes.HashtagNotFound ("não contém hashtag")
+
+def filtra(hashtag):
+    pass
+
+try:    
 
     twitter = TwitterModule.ManageTwitter(consumer_key,consumer_secret,\
-                                        acess_token, acess_token_secret)
+                                          acess_token, acess_token_secret)
+    twitter.verify()
     if args.addhashtag is not None:
         cria_hashtag(args.addhashtag)
-    rm_hashtag('x86girl')
+    if args.rmhashtag is not None:
+        rm_hashtag(args.rmhashtag)
+    if args.filtrahashtag is not None:
+        filtra(args.addhashtag)
+    
 except ManipulaExcecoes.LengthError as tamexce:
     print(tamexce)
     sys.exit()
