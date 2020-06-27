@@ -4,7 +4,9 @@
 """
 Created on Thu Apr  2 18:21:43 2020
 
-@author: Priscila
+Author: Priscila Gutierres <priscila.gutierres@gmail.com>
+
+License: MIT
 """
 
 import tweepy
@@ -20,37 +22,43 @@ class ManageTwitter:
                               wait_on_rate_limit_notify=True)
 #        self.streaming = self.MyStreamListener()
         
-    def send(self, message):
-        '''Sends a simple message.
-        Input: message (string)
+    def send(self, status):
         '''
-        self.api.update_status(message)
+        Sends a simple status.
+        Input: status (string)
+        '''
+        self.api.update_status(status)
     def erase(self, tweet_id):
-        '''Erases a single message
-        Input: message ID (string)
+        '''
+        Erases a single status
+        Input: status ID (string)
         '''
         self.api.destroy_status(tweet_id)
     def erase_all(self,pattern):
-        '''Erases a bunch of messages with a pattern
+        '''
+        Erases a bunch of statuss with a pattern
         Input: pattern (string)
         '''
         for status in tweepy.Cursor(self.api.user_timeline).items():
             if pattern in status.text:
                 self.api.destroy_status(status.id)
     def search(self,text, items = 10):
-        '''Searchs for some text in tweets
+        '''
+        Searchs for some text in tweets
         Input: text, items (optional)
         Output: tweets that match
         '''
         result = tweepy.Cursor(self.api.search, q=text).items(items)
         return result
-    def reply(self, message, tweetid):
-        '''Reply a message by a certain user
-        Input: message (string), tweetid (string) 
+    def reply(self, status, tweetid):
         '''
-        self.api.update_status(message, in_reply_to_status_id = tweetid)
+        Reply a status by a certain user
+        Input: status (string), tweetid (string) 
+        '''
+        self.api.update_status(status, in_reply_to_status_id = tweetid)
     def retweet(self, tweetid):
-        '''Retweet a message by a certain user
+        '''
+        Retweet a status by a certain user
         Input: tweetid (string)
         '''
         self.api.retweet(tweetid)
@@ -61,12 +69,30 @@ class ManageTwitter:
         Raise an exception if not
         '''
         self.api.verify_credentials()
-    def stream(self,message):
-        streaming = self.MyStreamListener()
-        streaming.on_status(message, self.api)
-        
+    def stream(self,status):
+        '''
+        Do Async Streaming 
+        Input: status (string)
+        '''
+        myStreamListener = MyStreamListener()
+        myStream = tweepy.Stream(auth = self.api.auth,
+                                 listener = myStreamListener)
+        myStream.filter(track=[status], is_async = True)
+    
 class MyStreamListener(tweepy.StreamListener):
-    def __init__(self,message, api):
-        self.api = api
-        self.myStream = tweepy.Stream(auth = api.auth, 
-                                      listener=myStreamListener)
+    '''
+    Create class MyStreamListener inheriting from StreamListener 
+    and overriding on_status
+    '''
+    def on_status(self,status):
+        '''
+        Returns a stream
+        '''
+        author = status.author._json['screen_name']
+        date = status.created_at
+        print('\n')
+        print('@{}, {}'.format(author,date))
+        print(status.text)
+          
+  
+    

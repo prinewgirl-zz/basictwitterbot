@@ -70,19 +70,23 @@ def rm_hashtag(hashtag):
         raise ManipulaExcecoes.HashtagNotFound ("não contém hashtag")
 
 def filtra(hashtag):
-    pass
+    '''essa função recebe uma hashtag e filtra todos os tweets que estão 
+    sendo feitos a partir dela'''
+    twitter.stream(hashtag)
 
 try:    
 
     twitter = TwitterModule.ManageTwitter(consumer_key,consumer_secret,\
                                           acess_token, acess_token_secret)
     twitter.verify()
+    
     if args.addhashtag is not None:
         cria_hashtag(args.addhashtag)
     if args.rmhashtag is not None:
         rm_hashtag(args.rmhashtag)
     if args.filtrahashtag is not None:
-        filtra(args.addhashtag)
+        filtra(args.filtrahashtag)
+    
     
 except ManipulaExcecoes.LengthError as tamexce:
     print(tamexce)
