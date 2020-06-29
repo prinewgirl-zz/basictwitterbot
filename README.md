@@ -1,4 +1,5 @@
-twitter app
+Esse repositório contém: twitterapp.py : versão  para deploy usando o docker
+
 
 Esse programa tem as seguintes funções:
     Fazer autenticação e autorização de usuário;
