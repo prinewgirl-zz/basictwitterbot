@@ -18,9 +18,3 @@ branches:
 notifications:
   recipients:
       priscila.gutierres@gmail.com
-
-deploy:
-  provider: heroku
-  api_key:
-    secure: 
-  on: main
