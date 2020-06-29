@@ -6,7 +6,15 @@ install:
   - pip install -r requirements.txt
 # command to run tests
 script:
-  - py.test Testes/teste.py
+  - python3 twitterapp.py --adiciona '#pussulu'
+  - python3 twitterapp.py --filtra '#pussulu' 2
+  - python3 twitterapp.py --remove '#pussulu'
+  
+
+branches:
+   only:
+   - master
+
 notifications:
   recipients:
       priscila.gutierres@gmail.com

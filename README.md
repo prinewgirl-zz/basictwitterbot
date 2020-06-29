@@ -25,3 +25,23 @@ $ python twitterapp.py <opções>
 Para ajuda, digite:
 
 $ python twitterapp.py -h
+
+Modo de usar:
+
+Primeiro, preencha o arquivo parametros.ini com os dados forecidos pelo twitter.
+
+Exemplos comuns de uso:
+
+Na linha de comando (terminal linux ou PowerShell, no caso do Windows) faça:
+
+Para criar uma hashtag:
+
+python twitterapp.py --cria '#hashtag'
+
+Para listar uma hashtag por 1 minuto (60 segundos):
+
+python twitterapp.py --filtra '#hashtag' 60
+
+Para apagar todas as referências na sua timeline a uma hashtag:
+
+python twitterapp.py --remove '#hashtag'

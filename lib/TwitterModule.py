@@ -10,6 +10,7 @@ License: MIT
 """
 
 import tweepy
+import time
 
 class ManageTwitter:
     '''This class manage tweepy API making it easy for the user'''
@@ -69,12 +70,12 @@ class ManageTwitter:
         Raise an exception if not
         '''
         self.api.verify_credentials()
-    def stream(self,status):
+    def stream(self,status,time):
         '''
         Do Async Streaming 
         Input: status (string)
         '''
-        myStreamListener = MyStreamListener()
+        myStreamListener = MyStreamListener(time_limit=time)
         myStream = tweepy.Stream(auth = self.api.auth,
                                  listener = myStreamListener)
         myStream.filter(track=[status], is_async = True)
@@ -84,15 +85,24 @@ class MyStreamListener(tweepy.StreamListener):
     Create class MyStreamListener inheriting from StreamListener 
     and overriding on_status
     '''
+    def __init__(self, time_limit=60):
+        self.start_time = time.time()
+        self.limit = time_limit
+        super(MyStreamListener, self).__init__()
+        
     def on_status(self,status):
         '''
         Returns a stream
         '''
-        author = status.author._json['screen_name']
-        date = status.created_at
-        print('\n')
-        print('@{}, {}'.format(author,date))
-        print(status.text)
+        if (time.time() - self.start_time) < self.limit:
+            author = status.author._json['screen_name']
+            date = status.created_at
+            print('\n')
+            print('@{}, {}'.format(author,date))
+            print(status.text)
+            return True
+        else:
+            return False
           
   
     

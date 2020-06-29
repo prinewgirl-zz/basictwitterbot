@@ -11,14 +11,14 @@ Esse programa tem as seguintes funções:
     Filtrar as mensagens listadas por hashtag.
     
     Os parâmetros de input e output são listados executando-se
-    $ python3 twitterapp.py -h
+    $ python3 botapp.py -h
 """
 
 import argparse
 import configparser
 import os
-from Lib import TwitterModule
-from Lib import ManipulaExcecoes
+from lib import TwitterModule
+from lib import ManipulaExcecoes
 from tweepy import error
 import sys 
 
@@ -42,12 +42,13 @@ user = config.get("Geral","USERNAME")
 ###############################################################################
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--addhashtag', help='Adiciona uma hashtag', 
-                    metavar='HASHTAG',default=None)
-parser.add_argument('--rmhashtag', help='Remove uma hashtag', 
-                    metavar='HASHTAG',default=None)
-parser.add_argument('--filtrahashtag', help='Filtra uma hashtag', 
-                    metavar='HASHTAG',default=None)
+parser.add_argument('--adiciona', help='Adiciona uma hashtag', 
+                    metavar='<hashtag>',default=None)
+parser.add_argument('--remove', help='Remove uma hashtag', 
+                    metavar='<hashtag>',default=None)
+parser.add_argument('--filtra', help='Filtra uma hashtag especificando  a \
+                    hashtag e o tempo', 
+                    metavar='<arg>',default=None, nargs=2)
 args = parser.parse_args()
 
 def cria_hashtag(texto):
@@ -57,7 +58,7 @@ def cria_hashtag(texto):
         raise ManipulaExcecoes.LengthError("No. de caracteres excedido")
     else:
         if '#' in texto:
-            twitter.send(texto)
+            bot.send(texto)
         else:
             raise ManipulaExcecoes.HashtagNotFound("não contém hashtag")
 
@@ -65,36 +66,40 @@ def rm_hashtag(hashtag):
     '''essa função recebe uma hashtag e deleta todos os tweets feitos
     pelo usuário a usando'''
     if '#' in hashtag:
-        twitter.erase_all(hashtag)
+        bot.erase_all(hashtag)
     else:
         raise ManipulaExcecoes.HashtagNotFound ("não contém hashtag")
 
-def filtra(hashtag):
+def filtra(hashtag, tempo):
     '''essa função recebe uma hashtag e filtra todos os tweets que estão 
     sendo feitos a partir dela'''
-    twitter.stream(hashtag)
+    try:
+        bot.stream(hashtag, tempo)
+    except KeyboardInterrupt:
+        sys.exit()
 
 try:    
 
-    twitter = TwitterModule.ManageTwitter(consumer_key,consumer_secret,\
+    bot = TwitterModule.ManageTwitter(consumer_key,consumer_secret,\
                                           acess_token, acess_token_secret)
-    twitter.verify()
+    bot.verify()
     
-    if args.addhashtag is not None:
-        cria_hashtag(args.addhashtag)
-    if args.rmhashtag is not None:
-        rm_hashtag(args.rmhashtag)
-    if args.filtrahashtag is not None:
-        filtra(args.filtrahashtag)
-    
-    
+    if args.adiciona is not None:
+        cria_hashtag(args.adiciona)
+    if args.remove is not None:
+        rm_hashtag(args.remove)
+    if args.filtra is not None:
+        filtra(args.filtra[0], int(args.filtra[1]))
+
 except ManipulaExcecoes.LengthError as tamexce:
-    print(tamexce)
+    sys.stderr.write(tamexce)
     sys.exit()
 except ManipulaExcecoes.HashtagNotFound as hashnot:
-    print(hashnot)
+    sys.stderr.write(hashnot)
     sys.exit()
 except error.TweepError as error:
-    print("Problema com a API do twitter")
-    print(error)
+    print("Problema com a API do bot")
+    sys.stderr.write(error)
+    sys.exit()
+except KeyboardInterrupt:
     sys.exit()
